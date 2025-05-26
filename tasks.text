@@ -1,0 +1,49 @@
+import json
+
+def save_tasks(tasks, filename="tasks.txt"):
+    with open(filename, "w") as f:
+        json.dump(tasks, f)
+
+def load_tasks(filename="tasks.txt"):
+    try:
+        with open(filename, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+# Load tasks at startup
+if "tasks" not in st.session_state:
+    st.session_state.tasks = load_tasks()
+
+# After adding/deleting/updating
+save_tasks(st.session_state.tasks)
+
+
+due_date = st.date_input("Due Date (optional)")
+
+st.session_state.tasks.append({
+    "task": task,
+    "done": False,
+    "due": str(due_date)
+})
+
+st.write(f"📌 {t['task']} — Due: {t['due']}")
+status_filter = st.selectbox("Show", ["All", "Completed", "Pending"])
+
+for t in st.session_state.tasks:
+    if status_filter == "Completed" and not t["done"]:
+        continue
+    elif status_filter == "Pending" and t["done"]:
+        continue
+    st.write("✅ " if t["done"] else "🔲 ", t["task"])
+for t in st.session_state.tasks:
+    if status_filter == "Completed" and not t["done"]:
+        continue
+    elif status_filter == "Pending" and t["done"]:
+        continue
+    st.write("✅ " if t["done"] else "🔲 ", t["task"])
+password = st.text_input("Enter password:", type="password")
+if password != "yourSecret":
+    st.warning("Wrong password.")
+    st.stop()
+
+
